@@ -159,7 +159,7 @@ metadata:
     app: nginx
   annotations:
     service.beta.kubernetes.io/azure-load-balancer-internal: "true"
-    service.beta.kubernetes.io/azure-load-balancer-internal-subnet: "SVCSUBNET"
+    service.beta.kubernetes.io/azure-load-balancer-internal-subnet: "PROJ-DEV-ADOBE-TRNS-MAGENTO-AKS-SERVICES-SN"
 spec:
   # You can change it to NodePort if you are planning to use the service only through App Gateway
   type: LoadBalancer
