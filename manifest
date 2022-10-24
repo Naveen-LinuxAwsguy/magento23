@@ -95,3 +95,6 @@ data:
   MYSQL_ROOT_PASSWORD: TG9naW4jMjIK
   MYSQL_USER: bWFnZW50bw==
   MYSQL_DATABASE: bWFnZW50bw==
+  
+  
+  https://learn.microsoft.com/en-us/azure/aks/azure-files-volume
