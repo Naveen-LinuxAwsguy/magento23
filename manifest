@@ -1,0 +1,97 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql-adobe-commerece
+  labels:
+    prj: Etisalat-dev
+spec:
+  selector:
+    matchLabels:
+      prj: Etisalat-dev
+  template:
+    metadata:
+      labels:
+        prj: Etisalat-dev
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: "node"
+                operator: In
+                values: ["node1"]
+      containers:
+        - name: mysql-adobe-commerece-dev
+          image: mysql:8.0
+          imagePullPolicy: IfNotPresent
+          
+          ports:
+            - containerPort: 3306
+              name: mysql
+          env:
+        
+            - name: "MYSQL_USER"
+              valueFrom:
+                secretKeyRef: 
+                 name: mysql-db-password
+                 key: MYSQL_USER
+            - name: "MYSQL_PASSWORD"
+              valueFrom:
+                secretKeyRef: 
+                 name: mysql-db-password
+                 key: MYSQL_PASSWORD
+            - name: "MYSQL_DATABASE"
+              valueFrom:
+                 secretKeyRef: 
+                  name: mysql-db-password
+                  key: MYSQL_DATABASE
+            - name: "MYSQL_ROOT_PASSWORD"
+              valueFrom:
+                secretKeyRef: 
+                 name: mysql-db-password
+                 key: MYSQL_ROOT_PASSWORD
+          volumeMounts:
+            - name: default-pv
+              mountPath: /var/lib/mysql
+              subPath: test
+
+          resources:
+               limits:
+                 memory: 500Mi
+                 cpu: 500m
+               requests:
+                  memory: 100Mi
+                  cpu: 100m  
+      volumes:
+        - name: default-pv
+          persistentVolumeClaim:
+            claimName: test
+
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: backend
+spec:
+  type: ClusterIP
+  selector:
+    prj: Etisalat-dev
+  ports: 
+    - port: 3306  
+      targetPort: 3306
+      
+      
+      
+      
+      
+      apiVersion: v1
+kind: Secret
+metadata:
+  name: mysql-db-password
+type: Opaque
+data:
+  MYSQL_PASSWORD: TG9naW4jMjIK
+  MYSQL_ROOT_PASSWORD: TG9naW4jMjIK
+  MYSQL_USER: bWFnZW50bw==
+  MYSQL_DATABASE: bWFnZW50bw==
