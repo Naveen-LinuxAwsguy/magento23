@@ -33,6 +33,32 @@ spec:
         
             - name: "MYSQL_USER"
               valueFrom:
+              
+              
+              
+              apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: azurefile
+spec:
+  capacity:
+    storage: 5Gi
+  accessModes:
+    - ReadWriteMany
+  azureFile:
+    secretName: azure-secret
+    shareName: aksshare
+    readOnly: false
+  mountOptions:
+  - dir_mode=0777
+  - file_mode=0777
+  - uid=1000
+  - gid=1000
+  - mfsymlinks
+  - nobrl
+  
+  
+  
                 secretKeyRef: 
                  name: mysql-db-password
                  key: MYSQL_USER
