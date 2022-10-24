@@ -149,3 +149,21 @@ mountOptions:
   
   
   https://learn.microsoft.com/en-us/azure/aks/azure-files-volume
+  
+  
+  apiVersion: v1
+kind: Service
+metadata:
+  name: nginx-service
+  labels:
+    app: nginx
+  annotations:
+    service.beta.kubernetes.io/azure-load-balancer-internal: "true"
+    service.beta.kubernetes.io/azure-load-balancer-internal-subnet: "SVCSUBNET"
+spec:
+  # You can change it to NodePort if you are planning to use the service only through App Gateway
+  type: LoadBalancer
+  ports:
+    - port: 80
+  selector:
+    app: nginx
