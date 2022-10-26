@@ -251,4 +251,39 @@ spec:
     requests:
       storage: 200Gi
   storageClassName: azurefile-csi
+  
+  apiVersion: v1
+kind: PersistentVolume
+metadata:
+  name: azurefile-mysql
+  namespace: devcommerece
+spec:
+  capacity:
+    storage: 200Gi
+  accessModes:
+    - ReadWriteMany
+  persistentVolumeReclaimPolicy: Retain
+  storageClassName: azurefile-csi
+  csi:
+    driver: file.csi.azure.com
+    readOnly: false
+    volumeHandle: unique-volumeid  # make sure this volumeid is unique in the cluster
+    volumeAttributes:
+      resourceGroup: PROJ-DEV-DGTL-EXP-PLTFRM-ADOBE-MAGENTO-RG # optional, only set this when storage account is not in the same resource group as agent node
+      shareName: mysqldev
+    nodeStageSecretRef:
+      name: azure-fileshare-secret
+      namespace: devcommerece
+  mountOptions:
+    - dir_mode=0777
+    - file_mode=0777
+    - uid=0
+    - gid=0
+    - mfsymlinks
+    - cache=strict
+    - nosharesock
+    - nobrl
+~
+~
+
 
