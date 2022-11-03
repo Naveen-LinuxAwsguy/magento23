@@ -320,4 +320,24 @@ spec:
 ~
 ~
 
+php bin/magento setup:install \
+               --base-url=http://20.232.241.225/  \
+               --db-host=sqlservice \
+               --db-name=magento \
+               --db-user=magento \
+               --db-password=MyNewPass4! \
+               --backend-frontname=admin \
+               --admin-firstname=naveen \
+               --admin-lastname=vasudevan \
+               --admin-email=naidunaveen6@gmail.com \
+               --admin-user=naveen \
+               --admin-password=Naveen#2246 \
+               --language=en_US \
+               --currency=USD \
+               --timezone=America/Chicago \
+               --use-rewrites=1 \
+               --search-engine=elasticsearch7 \
+               --elasticsearch-host=elasticsearch \
+               --elasticsearch-port=9200 
+
 
