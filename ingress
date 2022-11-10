@@ -320,7 +320,7 @@ spec:
       dnsPolicy: ClusterFirst
       containers:
         - name: controller
-          image: k8s.gcr.io/ingress-nginx/controller:v0.44.0@sha256:3dd0fac48073beaca2d67a78c746c7593f9c575168a17139a9955a82c63c4b9a
+          image: DevDigitalExperiencePlatformACR.azurecr.io/controller:v0.44.0
           imagePullPolicy: IfNotPresent
           lifecycle:
             preStop:
@@ -633,7 +633,7 @@ spec:
     spec:
       containers:
         - name: patch
-          image: docker.io/jettech/kube-webhook-certgen:v1.5.1
+          image: DevDigitalExperiencePlatformACR.azurecr.io/kube-webhook-certgen:v1.5.1
           imagePullPolicy: IfNotPresent
           args:
             - patch
