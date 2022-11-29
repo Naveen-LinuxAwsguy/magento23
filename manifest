@@ -2,6 +2,7 @@
 
 https://learn.microsoft.com/en-us/azure/aks/azure-files-csi
 
+kubectl describe pods mysql-etisalat-dev-9f44f87f9-df2tp -n qacommerece
 
 
 
