@@ -1,3 +1,6 @@
+
+0/3 nodes are available: 3 pod has unbound immediate PersistentVolumeClaims AKS
+
 FROM nginx:1.18
 
 RUN apt update && apt upgrade -y
