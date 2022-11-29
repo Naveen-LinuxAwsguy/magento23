@@ -1,3 +1,5 @@
+ kubectl config use-context PROJ-QA-ADOBE-MAGENTO-AKS
+
 https://learn.microsoft.com/en-us/azure/aks/azure-files-csi
 
 
