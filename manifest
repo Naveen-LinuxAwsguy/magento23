@@ -1,4 +1,14 @@
 
+https://qa-magento-digitalexp.etisalat.corp.ae/&
+
+https://dev-magento-digitalexp.etisalat.corp.ae/&
+
+https://qa-magento-digitalexp.etisalat.corp.ae/&
+
+https://dev-magento-digitalexp.etisalat.corp.ae/&
+
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
