@@ -1,4 +1,58 @@
- apiVersion: apps/v1
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec: 
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql
+  strategy:
+    type: Recreate 
+  template: 
+    metadata: 
+      labels: 
+        app: mysql
+    spec: 
+      containers:
+        - name: mysql
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              value: dbpassword11
+            - name: MYSQL_USER
+              value: magento
+            - name: MYSQL_DATABASE
+              value: magento
+            - name: MYSQL_PASSWORD
+              value: dbpassword11
+          ports:
+            - containerPort: 3306
+              name: mysql 
+         
+
+
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: backend
+spec:
+  type: ClusterIP
+  selector:
+    app: mysql
+  ports: 
+    - port: 3306  
+      targetPort: 3306
+
+
+
+
+
+
+
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis
