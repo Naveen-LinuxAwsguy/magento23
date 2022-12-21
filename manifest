@@ -6,7 +6,7 @@ https://dev-magento-digitalexp.etisalat.corp.ae/&
 https://qa-magento-digitalexp.etisalat.corp.ae/&
 
 https://dev-magento-digitalexp.etisalat.corp.ae/&
-
+https://github.com/nginxinc/docker-nginx-unprivileged/tree/main/entrypoint
 
 
 apiVersion: apps/v1
