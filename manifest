@@ -1,3 +1,11 @@
+
+
+https://qa-magento-digitalexp.etisalat.corp.ae/&
+
+https://dev-magento-digitalexp.etisalat.corp.ae/&
+
+
+
 apiVersion: v1
 kind: Namespace
 metadata:
