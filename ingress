@@ -1,4 +1,47 @@
 
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mysql
+spec:
+  strategy:
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
+    type: RollingUpdate
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mysql  
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      schedulerName: stork
+      containers:
+      - name: mysql
+        image: mysql:5.6
+        imagePullPolicy: "Always"
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          value: password        
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - mountPath: /var/lib/mysql
+          name: mysql-data
+      volumes:
+      - name: mysql-data
+        persistentVolumeClaim:
+          claimName: px-mysql-pvc
+
+
+
+
+
+
+
 mysql --host=10.164.143.36 --user=magento --password=EtisaLat#2022#maGento
 
 
