@@ -1,4 +1,19 @@
 
+
+
+    spec:
+      #affinity:
+       # nodeAffinity:
+         # requiredDuringSchedulingIgnoredDuringExecution:
+           # nodeSelectorTerms:
+           # - matchExpressions:
+            #  - key: "node"
+             #   operator: In
+              #  values:
+               #   - node1
+                #  - node2
+                 # - node3
+
 RC 10.165.137.4 
 
 UAT 10.165.142.4 
