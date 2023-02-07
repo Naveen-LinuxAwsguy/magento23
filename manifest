@@ -1,5 +1,6 @@
 
 https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.5.1/deploy/static/provider/cloud/deploy.yaml
+https://blog.nillsf.com/index.php/2021/01/11/azure-files-nfs-mounted-on-azure-kubernetes-service/#:~:text=Mounting%20NFS%20in%20AKS&text=We%20can%20create%20this%20pod,there%20on%20the%20mount%20point
 
     spec:
       #affinity:
