@@ -1,4 +1,46 @@
 
+           volumeMounts:
+           - name: config
+             mountPath: "/tmp"
+      volumes:
+        - name: config
+          configMap:
+            name: magento-config    
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: magento-config
+data:
+  default.vcl: |
+               #!/bin/bash
+               cd /var/www/html/magento
+                 php bin/magento setup:install \
+               --base-url=http://20.203.70.168/  \
+               --db-host=backend2 \
+               --db-name=magento \
+               --db-user=magento \
+               --db-password=password \
+               --backend-frontname=admin \
+               --admin-firstname=naveen \
+               --admin-lastname=vasudevan \
+               --admin-email=naidunaveen6@gmail.com \
+               --admin-user=naveen \
+               --admin-password=Naveen#2246 \
+               --language=en_US \
+               --currency=USD \
+               --timezone=America/Chicago \
+               --use-rewrites=1 \
+               --search-engine=elasticsearch7 \
+               --elasticsearch-host=m2-es-service \
+               --elasticsearch-port=9200 \
+                 bin/magento cron:install --force \
+                 bin/magento indexer:reindex \
+                 bin/magento deploy:mode:set developer \
+                 exec "$@"
+   
+
+
 apiVersion: apps/v1
 kind: Deployment
 metadata:
