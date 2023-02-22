@@ -1,4 +1,10 @@
 
+kubectl config use-context PROJ-RC-ADOBE-MAGENTO-AKS 
+kubectl config use-context proj-dev-adobe-magento-aks 
+kubectl config use-context PROJ-PD-ADOB-MGNTO-AKS
+kubectl config use-context PROJ-UAT-ADOBE-MAGENTO-AKS
+kubectl config use-context PROJ-QA-ADOBE-MAGENTO-AKS
+kubectl config use-context PROD-ADOBE-MAGENTO-AKS
            volumeMounts:
            - name: config
              mountPath: "/tmp"
