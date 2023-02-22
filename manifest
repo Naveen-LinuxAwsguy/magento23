@@ -1,4 +1,5 @@
 
+Class "Magento\AdminAdobeIms\Model\User\Interceptor" does not exist
 kubectl config use-context PROJ-RC-ADOBE-MAGENTO-AKS 
 kubectl config use-context proj-dev-adobe-magento-aks 
 kubectl config use-context PROJ-PD-ADOB-MGNTO-AKS
