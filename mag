@@ -1,4 +1,15 @@
 
+if [[ ${HOSTNAME} = "mysql-uat-0" ]]; then
+
+          echo "bind_address = \"${HOSTNAME}.mysql-service-uat\"" >> /mnt/conf/mysql-group.cnf
+          echo "report_host = \"${HOSTNAME}.mysql-service-uat\"" >> /mnt/conf/mysql-group.cnf
+          echo "group_replication_local_address=\"${HOSTNAME}.mysql-service-uat:33061\"" >> /mnt/conf/mysql-group.cnf
+          echo "group_replication_ip_whitelist=\"mysql-uat-0.mysql-service-uat,mysql-uat-1.mysql-service-uat,mysql-uat-2.mysql-service-uat\"" >> /mnt/conf/mysql-group.cnf
+          echo "group_replication_group_seeds=\"mysql-uat-0.mysql-service-uat:33061,mysql-uat-1.mysql-service-uat:33061,mysql-uat-2.mysql-service-uat:33061\"" >> /mnt/conf/mysql-group.cnf
+
+
+
+
 cat << EOF >> azure-storageclass-azure-file.yaml
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
