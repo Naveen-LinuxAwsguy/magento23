@@ -1,5 +1,5 @@
 
-
+kubectl exec -it mysql-group-replication-0 -- /init-replication.sh
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
 metadata:
