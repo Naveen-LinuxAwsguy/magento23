@@ -1,4 +1,61 @@
 
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: m2-es-cm
+data:
+  discovery.type: single-node
+
+---
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: m2-es-service
+spec:
+  selector:
+    app: elastic
+  clusterIP: None
+  ports:
+  - port: 9200
+
+---
+
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: m2-es-statefulset
+spec:
+  selector:
+    matchLabels:
+      app: elastic
+      web: magento
+  serviceName: m2-es-service
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: elastic
+        web: magento
+    spec:
+      containers:
+      - name: elasticsearch
+        image: elasticsearch:7.17.8
+        envFrom:
+          - configMapRef:
+              name: m2-es-cm
+        ports:
+        - containerPort: 9200
+          name: search
+        #volumeMounts:
+        #- name: search
+          #mountPath: "/var/lib/elasticsearch"
+      #volumes:
+        #- name: search
+          #persistentVolumeClaim:
+            #claimName: m2-es-pvc
+
+
 if [[ ${HOSTNAME} = "mysql-uat-0" ]]; then
 
           echo "bind_address = \"${HOSTNAME}.mysql-service-uat\"" >> /mnt/conf/mysql-group.cnf
