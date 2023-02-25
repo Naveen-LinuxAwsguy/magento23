@@ -1,4 +1,21 @@
 
+           ports:
+            - containerPort: 80
+            - containerPort: 9000
+           volumeMounts:
+           - name: web
+             mountPath: "/var/www/html/magento"
+             subPath: "magento"
+           - name: web
+             mountPath: "/etc/nginx"
+             subPath: nginx
+           - name: web
+             mountPath: "/etc/php/8.1/fpm"
+             subPath: "php"
+           - name: web
+             mountPath: "/etc/postfix"
+             subPath: "postfix"
+
 apiVersion: v1
 kind: ConfigMap
 metadata:
