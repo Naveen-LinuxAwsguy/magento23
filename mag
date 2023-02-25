@@ -1,3 +1,43 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: m2-redis-service
+spec:
+  selector:
+    app: redis
+  clusterIP: None
+  ports:
+  - port: 6379
+
+---
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: m2-redis-deploy
+spec:
+  selector:
+    matchLabels:
+      app: redis
+      web: magento
+  template:
+    metadata:
+      labels:
+        app: redis
+        web: magento
+    spec:
+      containers:
+      - name: m2-redis
+        image: redis
+        ports:
+        - containerPort: 6379
+        #volumeMounts:
+           #- name: redis
+             #mountPath: "/data"
+      #volumes:
+      #- name: redis
+        #persistentVolumeClaim:
+            #claimName: magento-pvc-42   
 
 apiVersion: v1
 kind: Service
