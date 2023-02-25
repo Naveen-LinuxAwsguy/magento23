@@ -1,0 +1,195 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mysql-group-replication
+spec:
+  selector:
+    matchLabels:
+      app: mysql
+  serviceName: mysql-group-service
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: mysql
+    spec:
+      securityContext:
+        runAsUser: 999
+        runAsGroup: 999
+        fsGroup: 999
+      initContainers:
+      - name: mysql-init
+        image: ubuntu:jammy
+        command:
+        - bash
+        - "-c"
+        - |
+          cp /mnt/temp/mysql-group.cnf /mnt/conf/mysql-group.cnf
+          [[ $HOSTNAME =~ -([0-9]+)$ ]] || exit 1
+          ordinal=${BASH_REMATCH[1]}
+          echo "server_id=$((100 + $ordinal))" >> /mnt/conf/mysql-group.cnf
+          # CHANGE THE BELOW LINES ACCORDINGLY
+          ######################
+          echo "bind_address = \"${HOSTNAME}.mysql-group-service\"" >> /mnt/conf/mysql-group.cnf
+          echo "report_host = \"${HOSTNAME}.mysql-group-service\"" >> /mnt/conf/mysql-group.cnf
+          echo "group_replication_local_address=\"${HOSTNAME}.mysql-group-service:33061\"" >> /mnt/conf/mysql-group.cnf
+          echo "group_replication_ip_whitelist=\"mysql-group-replication-0.mysql-group-service,mysql-group-replication-1.mysql-group-service,mysql-group-replication-2.mysql-group-service\"" >> /mnt/conf/mysql-group.cnf
+          echo "group_replication_group_seeds=\"mysql-group-replication-0.mysql-group-service:33061,mysql-group-replication-1.mysql-group-service:33061,mysql-group-replication-2.mysql-group-service:33061\"" >> /mnt/conf/mysql-group.cnf
+          ######################
+          cp /mnt/temp/init-replication.sh /mnt/conf/init-replication.sh
+          cp /mnt/temp/copy-config.sh /mnt/conf/copy-config.sh
+          cp /mnt/temp/create-replica-user.sh /mnt/conf/create-replica-user.sh
+          # MAKING THE SCRIPTS EXECUTABLE
+          chmod +x /mnt/conf/copy-config.sh /mnt/conf/create-replica-user.sh /mnt/conf/init-replication.sh
+          # BY DEFAULT WE CAN'T WRITE TO "/etc/mysql/conf.d", HENCE, WE NEED TO CHANGE THE PERMISSIONS
+          # IN ORDER TO UPLOAD 'mysql-group.cnf'
+          mkdir /mnt/mysqlconf/conf.d
+          chmod 777 /mnt/mysqlconf/conf.d
+        volumeMounts:
+        - name: temp
+          mountPath: /mnt/temp
+        - name: conf
+          mountPath: /mnt/conf
+        - name: mysqlconf
+          mountPath: /mnt/mysqlconf
+      containers:
+      - name: mysql
+        image: mysql:8.0
+        env:
+          - name: MYSQL_ROOT_PASSWORD
+            value: 'Hlii&7C9Xz0Er'
+          - name: REPLICA_USER
+            value: repl
+          - name: REPLICA_PASS
+            value: 'R3pl!c@Pa5S'
+        # lifecycle:
+        #   postStart:
+        #     exec:
+        #       command: ["/bin/bash", "-c", "/init-replication.sh"]
+        ports:
+        - containerPort: 3306
+          name: mysql
+        - containerPort: 33061
+          name: replica
+        volumeMounts:
+        - name: conf
+          mountPath: /mysql-group.cnf
+          subPath: mysql-group.cnf
+        - name: conf
+          mountPath: /docker-entrypoint-initdb.d/copy-config.sh
+          subPath: copy-config.sh
+        - name: conf
+          mountPath: /docker-entrypoint-initdb.d/create-replica-user.sh
+          subPath: create-replica-user.sh
+        - name: mysqlconf
+          mountPath: /etc/mysql/conf.d
+          subPath: conf.d
+        - name: conf
+          mountPath: /init-replication.sh
+          subPath: init-replication.sh
+        - name: data
+          mountPath: /var/lib/mysql
+        resources:
+          requests:
+            memory: "512Mi"
+            cpu: "500m"
+          limits:
+            memory: "1536Mi"
+            cpu: "500m"
+      volumes:
+        - name: temp
+          configMap:
+            name: mysql-group-cm
+        - name: conf
+          emptyDir: {}
+        - name: mysqlconf
+          emptyDir: {}
+  volumeClaimTemplates:
+    - metadata:
+        name: data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        storageClassName: "my-azurefile"
+        resources:
+          requests:
+            storage: 5Gi
+            
+            
+  apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-group-service
+spec:
+  selector:
+    app: mysql
+  clusterIP: None
+  ports:
+  - name: mysql
+    port: 3306
+  - name: replica
+    port: 33061
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-group-cm
+data:
+  mysql-group.cnf: |
+    [mysqld]
+    # DISABLE OTHER STORAGE ENGINES
+    disabled_storage_engines="MyISAM,BLACKHOLE,FEDERATED,ARCHIVE,MEMORY"
+
+    # REPLICATION CONFIGURATION PARAMETERS
+    gtid_mode=ON
+    enforce_gtid_consistency=ON
+    binlog_checksum=CRC32
+    log_replica_updates=ON
+    binlog_format=ROW
+    replica_preserve_commit_order=ON
+    replica_parallel_type=LOGICAL_CLOCK
+
+    # GETTING ERROR SETTING UP BELOW:
+    #lower_case_table_names = 1
+
+    # USES THESE VALUES BY DEFAULT AND DEPRECATED TO USE IN THE CONF FILE FROM MySQL 8
+    #master_info_repository=TABLE
+    #relay_log_info_repository=TABLE
+    #transaction_write_set_extraction=XXHASH64
+
+    # GROUP REPLICATION CONFIGURATION
+    plugin_load_add='group_replication.so'
+    group_replication_group_name="bb49e45b-2f85-44fe-b3ea-e0b66d7385d3"
+    group_replication_start_on_boot=OFF
+    group_replication_bootstrap_group=OFF
+    group_replication_single_primary_mode=OFF
+
+  copy-config.sh: |
+    #!/bin/bash
+    
+    cp /mysql-group.cnf /etc/mysql/conf.d/mysql-group.cnf
+
+  create-replica-user.sh: |
+    #!/bin/bash
+
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "SET SQL_LOG_BIN=0;"
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CREATE USER IF NOT EXISTS '$REPLICA_USER'@'%' IDENTIFIED WITH mysql_native_password BY '$REPLICA_PASS';"
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "GRANT REPLICATION SLAVE ON *.* TO '$REPLICA_USER'@'%';"
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "GRANT CONNECTION_ADMIN ON *.* TO '$REPLICA_USER'@'%';"
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "GRANT BACKUP_ADMIN ON *.* TO '$REPLICA_USER'@'%';"
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "GRANT GROUP_REPLICATION_STREAM ON *.* TO '$REPLICA_USER'@'%';"
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "FLUSH PRIVILEGES;"
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "SET SQL_LOG_BIN=1;"
+
+  init-replication.sh: |
+    #!/bin/bash
+    
+    #mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "INSTALL PLUGIN group_replication SONAME 'group_replication.so';"
+    mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "CHANGE REPLICATION SOURCE TO SOURCE_USER='$REPLICA_USER', SOURCE_PASSWORD='$REPLICA_PASS' FOR CHANNEL 'group_replication_recovery';"
+
+    if [[ ${HOSTNAME} = "mysql-group-replication-0" ]]; then
+      mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "SET GLOBAL group_replication_bootstrap_group=ON;"
+      mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "START GROUP_REPLICATION USER='$REPLICA_USER', PASSWORD='$REPLICA_PASS';"
+      mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "SET GLOBAL group_replication_bootstrap_group=OFF;"
+    else
+      #sleep 10 # LET THE PRIMARY GROUP INSTANCE PREPARED
+      mysql -u root -p"$MYSQL_ROOT_PASSWORD" -e "START GROUP_REPLICATION USER='$REPLICA_USER', PASSWORD='$REPLICA_PASS';"
+    fi
