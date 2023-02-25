@@ -1,4 +1,32 @@
 
+cat << EOF >> azure-storageclass-azure-file.yaml
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: azure-file
+provisioner: kubernetes.io/azure-file
+mountOptions:
+  - dir_mode=0777
+  - file_mode=0777
+  - uid=0
+  - gid=0
+  - mfsymlinks
+  - cache=strict
+  - actimeo=30
+  - noperm
+parameters:
+  location: $LOCATION
+  secretNamespace: kube-system
+  skuName: Standard_LRS
+  storageAccount: $AZURE_STORAGE_ACCOUNT_NAME
+  resourceGroup: $AZURE_FILES_RESOURCE_GROUP
+reclaimPolicy: Delete
+volumeBindingMode: Immediate
+EOF
+
+oc create -f azure-storageclass-azure-file.yaml
+
+
 kubectl exec -it mysql-group-replication-0 -- /init-replication.sh
 kind: StorageClass
 apiVersion: storage.k8s.io/v1
