@@ -1,3 +1,24 @@
+
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: m2-web-cm
+data:
+  INIT_MAGENTO: "1"
+  BASE_URL: "http://20.203.64.165/"
+  DB_HOST: backend2 
+  DB_NAME: magento
+  DB_USER: root
+  DB_PASS: 'password'
+  ES_HOST: m2-es-service
+  VARNISH_PROXY: "1"
+  REDIS_CACHE: "1"
+  REDIS_HOST: m2-redis-service
+  RABBITMQ_MESSAGING: "1"
+  RABBITMQ_HOST: m2-rmq-service
+  RABBITMQ_USER: rabbit
+  RABBITMQ_PASS: 'R@6b!tmQ'
+
 apiVersion: v1
 kind: Service
 metadata:
