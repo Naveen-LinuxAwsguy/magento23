@@ -1,4 +1,10 @@
-
+magento 500mi 400mi 2 1.5
+mysql 500mi 400 mi 2 1.5
+es 400mi 300 mi 2 1.5
+redis 300mi 200 mi 1 700
+varnish 500 mi 400 mi 2 1.5
+rabbitmq 200 mi 150 mi 1 700
+ingress 400 MI 300 mi 2 1.5
 *9525 connect() to unix:/run/php/php8.1-fpm.sock failed (11: Resource temporarily unavailable) while connecting to upstream, client: 10.165.140.48, server: localhost, request: "GET /health_check.php HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.1-fpm.sock:", host: "magento-service"
 
 [error] 589#589: *11222 connect() to unix:/run/php/php8.1-fpm.sock failed (11: Resource temporarily unavailable) while connecting to upstream,
