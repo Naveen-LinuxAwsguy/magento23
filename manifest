@@ -1,4 +1,7 @@
 
+*9525 connect() to unix:/run/php/php8.1-fpm.sock failed (11: Resource temporarily unavailable) while connecting to upstream, client: 10.165.140.48, server: localhost, request: "GET /health_check.php HTTP/1.1", upstream: "fastcgi://unix:/run/php/php8.1-fpm.sock:", host: "magento-service"
+
+
 apiVersion: v1
 kind: Service
 metadata:
