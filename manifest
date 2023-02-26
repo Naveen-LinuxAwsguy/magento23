@@ -1,3 +1,6 @@
+
+php bin/magento admin:user:create --admin-user="admin" --admin-password="admin123" --admin-email="admin@gmail.com" --admin-firstname="Admin" --admin-lastname="Admin
+
 magento 500mi 400mi 2 1.5
 mysql 500mi 400 mi 2 1.5
 es 400mi 300 mi 2 1.5
