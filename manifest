@@ -1,4 +1,12 @@
 
+10.0.212.13  rc
+10.0.11.164  UAT
+10.0.29.7 preprod
+10.0.246.100 QA
+10.0.147.54  dev
+10.0.44.4   prod
+
+
         set resp.http.Pragma = "no-cache";
         set resp.http.Expires = "-1";
         set resp.http.Cache-Control = "no-store, no-cache, must-revalidate, max-age=0";
